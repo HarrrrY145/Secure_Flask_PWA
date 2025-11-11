@@ -11,3 +11,16 @@ def login():
 
 if __name__ == '__main__':
     app.run(debug=True)
+@app.route('/login_validation')
+def login_valdiation():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    connection = sqlite3.Connect('loginData.db')
+    cursor = connection.cursor()
+
+    user = cursor.execute("SELECT * FROM USERS WHERE email=? AND password=?", (email,password)).fetchall()
+    if len(user) > 0:
+        return 'Welcome'
+    else:
+        return redirect('/')
