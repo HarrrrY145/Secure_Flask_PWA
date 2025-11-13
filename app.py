@@ -31,3 +31,25 @@ def home():
     email = request.args.get('email')
 
     return render_template('home.html', fname=fname, lname=lname, email=email)
+
+@app.route('/add_user', methods= ['POST'])
+def add_user():
+    fname = request.form.get('fname')
+    lname = request.form.get('lname')
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    connection = sqlite3.connect('loginData.db')
+    cursor = connection.cursor()
+
+    ans = cursor.execute("select * from USER where email=? AND password =?",(email,password)).fetchall()
+
+    if len(ans) > 0:
+        connection.close()
+        return render_template('login.html')
+    else: 
+        cursor.execute("INSERT INTO USERS(fname,lname,email,password)value(?,?,?,?)",(fname,lname,email,password))
+        connection.commit()
+        connection.close()
+        return render_template('login.html')
+                       
